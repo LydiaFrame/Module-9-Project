@@ -1,0 +1,120 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <iomanip> // For setprecision
+
+using namespace std;
+
+const int MAX_ITEMS = 10;
+
+// Struct to represent menu items
+struct MenuItemType {
+    string menuItem;
+    double menuPrice;
+};
+
+// Function to load menu data from a text file into the array menuList
+void getData(MenuItemType menuList[], int& numItems) {
+    ifstream file("menu.txt");
+    if (!file) {
+        cerr << "Unable to open menu.txt" << endl;
+        exit(1);
+    }
+
+    numItems = 0;
+    string itemName;
+    double itemPrice;
+    while (numItems < MAX_ITEMS && file >> itemName >> itemPrice) {
+        menuList[numItems].menuItem = itemName;
+        menuList[numItems].menuPrice = itemPrice;
+        numItems++;
+    }
+
+    file.close();
+}
+
+// Function to display the menu and instructions for selecting items
+void showMenu() {
+    ifstream file("menu.txt");
+    if (!file) {
+        cerr << "Unable to open menu.txt" << endl;
+        return;
+    }
+
+    cout << "Welcome to Dumpster Cafe!" << endl;
+    cout << "Menu:" << endl;
+    string line;
+    while (getline(file, line)) {
+        cout << line << endl;
+    }
+    cout << "Please select the items you'd like to order by typing their names separated by spaces." << endl;
+    cout << "For example, to order Bacon and Egg sandwich and Muffin, enter: Bacon Muffin" << endl;
+
+    file.close();
+}
+
+// Function to calculate and print the check
+void printCheck(const MenuItemType menuList[], int numItems, const string selectedItems[], int numSelectedItems) {
+    double subtotal = 0.0;
+    cout << "Your order:" << endl;
+    for (int i = 0; i < numSelectedItems; ++i) {
+        bool found = false;
+        for (int j = 0; j < numItems; ++j) {
+            if (menuList[j].menuItem == selectedItems[i]) {
+                cout << menuList[j].menuItem << "\t$" << menuList[j].menuPrice << endl;
+                subtotal += menuList[j].menuPrice;
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            cout << "Invalid item name: " << selectedItems[i] << endl;
+        }
+    }
+
+    double tax = subtotal * 0.05; // Calculate tax (5%)
+    double total = subtotal + tax; // Calculate total including tax
+
+    cout << fixed << setprecision(2); // Set output format to 2 decimal places
+    cout << "Subtotal: $" << subtotal << endl;
+    cout << "Tax (5%): $" << tax << endl;
+    cout << "Total: $" << total << endl;
+}
+
+int main() {
+    // Load menu data from file
+    MenuItemType menuList[MAX_ITEMS];
+    int numItems;
+    getData(menuList, numItems);
+
+    // Display menu and instructions for selecting items
+    showMenu();
+
+    // Allow customer to select items
+    string selectedItems[MAX_ITEMS];
+    int numSelectedItems = 0;
+    cout << "Enter the menu item names you'd like to order (type 'done' to finish): ";
+    string selectedItem;
+    while (cin >> selectedItem && selectedItem != "done") {
+        bool found = false;
+        for (int i = 0; i < numItems; ++i) {
+            if (menuList[i].menuItem == selectedItem) {
+                selectedItems[numSelectedItems++] = selectedItem;
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            cout << "Invalid item name. Please try again: ";
+        }
+    }
+
+    // Print the check
+    if (numSelectedItems > 0) {
+        printCheck(menuList, numItems, selectedItems, numSelectedItems);
+    } else {
+        cout << "No items selected. Exiting program." << endl;
+    }
+
+    return 0;
+}
