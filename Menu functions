@@ -85,7 +85,7 @@ const int MAX_ITEMS = 10;
 // Function to read data from a file and store it in an array
 int readDataFromFile(const string& filename, string data[], int maxItems) {
     // Open the file
-    ifstream file(filename);
+    ifstream file(filename.c_str());
     if (!file) {
         cerr << "Unable to open file" << endl;
         return 0;
@@ -106,7 +106,7 @@ int readDataFromFile(const string& filename, string data[], int maxItems) {
 
 int main() {
     string data[MAX_ITEMS];
-    int numItems = readDataFromFile("data.txt", data, MAX_ITEMS);
+    int numItems = readDataFromFile("menu.txt", data, MAX_ITEMS);
 
     if (numItems > 0) {
         cout << "Data read from file:" << endl;
