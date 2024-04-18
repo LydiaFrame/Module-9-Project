@@ -1,4 +1,4 @@
-// Function to display the contents of a text file
+// Function to display the contents of a text file//
 void showMenu() {
     ifstream file("menu.txt");
     if (!file) {
@@ -62,6 +62,59 @@ int main() {
     cout << "Data read from file:" << endl;
     for (int i = 0; i < numItems; ++i) {
         cout << data[i] << endl;
+    }
+
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+The readDataFromFile function takes the filename, array to store data, and the maximum number of items to read as parameters.
+Inside the function, it opens the file, reads data from it, stores it in the array, and returns the number of items read.
+In the main function, readDataFromFile is called to read data from the file "data.txt" into the data array.
+The program then displays the data stored in the array.
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#include <iostream>
+#include <fstream> // For file handling
+#include <string>
+
+using namespace std;
+
+const int MAX_ITEMS = 10;
+
+// Function to read data from a file and store it in an array
+int readDataFromFile(const string& filename, string data[], int maxItems) {
+    // Open the file
+    ifstream file(filename);
+    if (!file) {
+        cerr << "Unable to open file" << endl;
+        return 0;
+    }
+
+    // Read data from the file and store it in the array
+    int numItems = 0; // Variable to keep track of the number of items read
+    string line;
+    while (getline(file, line) && numItems < maxItems) {
+        data[numItems++] = line;
+    }
+
+    // Close the file
+    file.close();
+
+    return numItems;
+}
+
+int main() {
+    string data[MAX_ITEMS];
+    int numItems = readDataFromFile("data.txt", data, MAX_ITEMS);
+
+    if (numItems > 0) {
+        cout << "Data read from file:" << endl;
+        for (int i = 0; i < numItems; ++i) {
+            cout << data[i] << endl;
+        }
+    } else {
+        cout << "No data read from file." << endl;
     }
 
     return 0;
